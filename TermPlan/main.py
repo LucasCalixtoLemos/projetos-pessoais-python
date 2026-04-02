@@ -55,34 +55,48 @@ def login():
 
 # criar evento
 def criarevento():
-    print(f'{"Criação de Evento\n":^60}')
-    diaevento = int(input('Dia (Ex.: 08): '))
+    print(f'{"Criação de Evento\n".center(60)}')
+
+    diaevento = int(input('Dia (Ex.: 05): '))
     mesevento = int(input('Mês (Ex.: 08): '))
-    anoevento = int(input('Ano (Ex.: 2026): '))
-    horaevento = int(input('Horário (Ex: 15:30): '))
-    nomeevento = input('Nome do evento (Ex.: Médico): ')
+    anoevento = int(input(f'Ano (Ex.: {agora.year}): '))
+    horaevento = input('Horário (Ex.: 15:30): ')
+    nomeevento = input('Nome: ')
 
     with open ('TermPlan/eventos.csv', 'a', newline='') as eventos:
         escritor = csv.writer(eventos)
         escritor.writerow([diaevento, mesevento, anoevento, horaevento, nomeevento])
 
-        print(f'Evento salvo com sucesso!')
 
 # agenda da semana
 def agendadasemana():
     print(f'{"Agenda da Semana".center(60)}')
 
-    diassemana = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira',
-                   'Sexta-feira', 'Sábado', 'Domingo']
+    semana = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 
+                    'Sexta-feira', 'Sábado', 'Domingo']
     
-    hoje = agora.isoweekday()
-
-    for i, dia in enumerate(diassemana, start=1): # → start=1 faz com que o loop comece em 1
+    hoje = agora.weekday() 
+    
+    for i in range(7):
         if i == hoje:
-            print(f'→ \033[1;33m{dia}\033[m \033[1;32m(Hoje)\033[m: ')
+            print(f'-→ {semana[i]} (Hoje):')
+            
+            with open ('TermPlan/eventos.csv', 'r') as eventos:
+                leitor = csv.reader(eventos)
 
-        else:
-            print(f'{dia}: ')
+                for linha in leitor:
+                    diaevento = int(linha[0])
+                    mesevento = int(linha[1])
+                    anoevento = int(linha[2])
+                    horaevento = linha[3]
+                    nomeevento = linha[4]
+
+                    data_evento = datetime(anoevento, mesevento, diaevento)
+
+                    if data_evento.weekday() == i:
+                        print(f'   - {horaevento} | {nomeevento}')
+    
+        
 
 # CODIGO MAIN-----------------------------------------------------------------------
 
